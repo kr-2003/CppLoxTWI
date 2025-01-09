@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
+#include "../headers/Lox.hpp"
 
-TEST(InitialTest, Test1) {
-    EXPECT_EQ(1, 1);
+TEST(InitialTest, TestingLoxClass) {
+    TWI::Lox lox;
+    lox.run("Hello, World!");
+    SUCCEED();
 }
