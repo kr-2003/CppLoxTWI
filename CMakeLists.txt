@@ -16,6 +16,18 @@ file(GLOB_RECURSE Headers CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/headers/*.hpp")
 
 file(GLOB Sources CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/*.cpp")
 
+#exclude AstPrinter.cpp from the main executable
+list(FILTER Sources EXCLUDE REGEX "AstPrinter.cpp")
+
+add_executable(${This}_Executable ${Sources} ${Headers})
+
+#exclude main.cpp from the library but include AstPrinter.cpp
+
+list(FILTER Sources EXCLUDE REGEX "main.cpp")
+list(APPEND Sources "${CMAKE_SOURCE_DIR}/AstPrinter.cpp")
+
+add_executable(${This}_Executable_AstPrinter ${Sources} ${Headers})
+
 add_library(${This} STATIC ${Sources} ${Headers})
 
 add_subdirectory(test)

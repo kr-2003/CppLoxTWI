@@ -1,25 +1,30 @@
 #include <iostream>
-#include <string>
 #include <fstream>
 #include "headers/Errors.hpp"
 #include "headers/Lox.hpp"
+#include "headers/Scanner.hpp"
 
 TWI::Lox::Lox()
 {
     hadError = false;
 }
 
-void TWI::Lox::run(const char* source)
+void TWI::Lox::run(std::string source)
 {
-    std::cout << source << std::endl;
+    Scanner scanner{source};
+    std::vector<Token> tokens = scanner.scanTokens();
+
+    for(Token token : tokens)
+    {
+        std::cout << token.toString() << std::endl;
+    }
 }
 
-std::string TWI::Lox::readFile(const
-    char* path)
+std::string TWI::Lox::readFile(std::string path)
 {
-    std::ifstream file {path, std::ios::in | std::ios::binary | std::ios::ate};
+    std::ifstream file{path, std::ios::in | std::ios::binary | std::ios::ate};
 
-    if(!file)
+    if (!file)
     {
         std::cerr << "Could not open file " << path << std::endl;
         exit(74);
@@ -38,28 +43,26 @@ std::string TWI::Lox::readFile(const
 
 void TWI::Lox::runPrompt()
 {
-    for(;;)
+    for (;;)
     {
         std::cout << "> ";
         std::string line;
         std::getline(std::cin, line);
-        if(line.empty()) break;
+        if (line.empty())
+            break;
         run(line.c_str());
         hadError = false;
     }
 }
 
-void TWI::Lox::runFile(const char* path)
+void TWI::Lox::runFile(std::string path)
 {
-    std::string contents
-        = readFile(path);
+    std::string contents = readFile(path);
 
     run(contents.c_str());
 
-    if(hadError) 
+    if (hadError)
     {
         exit(65);
     }
 }
-
-

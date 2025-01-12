@@ -9,12 +9,12 @@ namespace TWI
     {
         public:
             Lox();
-            void runFile(const char* path);
+            void runFile(std::string path);
             void runPrompt();
-            void run(const char* source);
+            void run(std::string source);
 
         private:
-            std::string readFile(const char* path);
+            std::string readFile(std::string path);
             bool hadError;
     };
 }
