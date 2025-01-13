@@ -3,6 +3,8 @@
 #include "headers/Errors.hpp"
 #include "headers/Lox.hpp"
 #include "headers/Scanner.hpp"
+#include "headers/Parser.hpp"
+#include "headers/AstPrinter.hpp"
 
 TWI::Lox::Lox()
 {
@@ -13,11 +15,12 @@ void TWI::Lox::run(std::string source)
 {
     Scanner scanner{source};
     std::vector<Token> tokens = scanner.scanTokens();
+    Parser parser{tokens};
+    std::shared_ptr<Expr> expression = parser.parse();
 
-    for(Token token : tokens)
-    {
-        std::cout << token.toString() << std::endl;
-    }
+    if(hadError) return;
+
+    std::cout << AstPrinter{}.print(expression) << "\n";
 }
 
 std::string TWI::Lox::readFile(std::string path)
