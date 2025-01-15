@@ -36,8 +36,8 @@ std::string getActualOutput(std::string path)
 TEST(InitialTest, Testing_Lox_1) {
     TWI::Lox lox;
     
-    std::string path = TEST_FOLDER_PATH + "/test1.lox";
-    std::string expected_output = getExpectedOutput(TEST_EXPECTED_OUTPUT_FOLDER_PATH + "/test1.lox.expected");
+    std::string path = TEST_FOLDER_PATH + "/expr_1.lox";
+    std::string expected_output = getExpectedOutput(TEST_EXPECTED_OUTPUT_FOLDER_PATH + "/expr_1.lox.expected");
     std::string actual_output = getActualOutput(path);
 
     EXPECT_EQ(expected_output, actual_output);
@@ -46,13 +46,39 @@ TEST(InitialTest, Testing_Lox_1) {
 TEST(InitialTest, Testing_Lox_2) {
     TWI::Lox lox;
     
-    std::string path = TEST_FOLDER_PATH + "/test2.lox";
-    std::string expected_output = getExpectedOutput(TEST_EXPECTED_OUTPUT_FOLDER_PATH + "/test2.lox.expected");
+    std::string path = TEST_FOLDER_PATH + "/expr_2.lox";
+    std::string expected_output = getExpectedOutput(TEST_EXPECTED_OUTPUT_FOLDER_PATH + "/expr_2.lox.expected");
     std::string actual_output = getActualOutput(path);
 
     EXPECT_EQ(expected_output, actual_output);
 }
 
-TEST(InitialTest, TestingLoxClass2) {
-    EXPECT_TRUE(true);
+TEST(InitialTest, Testing_Lox_3) {
+    TWI::Lox lox;
+    
+    std::string path = TEST_FOLDER_PATH + "/expr_3.lox";
+    std::string expected_output = getExpectedOutput(TEST_EXPECTED_OUTPUT_FOLDER_PATH + "/expr_3.lox.expected");
+    std::string actual_output = getActualOutput(path);
+
+    EXPECT_EQ(expected_output, actual_output);
+}
+
+TEST(InitialTest, Testing_Lox_4) {
+    TWI::Lox lox;
+    
+    std::string path = TEST_FOLDER_PATH + "/expr_4.lox";
+    std::string expected_output = getExpectedOutput(TEST_EXPECTED_OUTPUT_FOLDER_PATH + "/expr_4.lox.expected");
+    std::string actual_output = getActualOutput(path);
+
+    EXPECT_EQ(expected_output, actual_output);
+}
+
+TEST(InitialTest, Testing_Lox_5) {
+    TWI::Lox lox;
+    
+    std::string path = TEST_FOLDER_PATH + "/expr_5.lox";
+    std::string expected_output = getExpectedOutput(TEST_EXPECTED_OUTPUT_FOLDER_PATH + "/expr_5.lox.expected");
+    std::string actual_output = getActualOutput(path);
+
+    EXPECT_EQ(expected_output, actual_output);
 }

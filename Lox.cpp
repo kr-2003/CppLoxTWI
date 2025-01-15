@@ -5,11 +5,14 @@
 #include "headers/Scanner.hpp"
 #include "headers/Parser.hpp"
 #include "headers/AstPrinter.hpp"
+#include "headers/Interpreter.hpp"
 
 TWI::Lox::Lox()
 {
     hadError = false;
 }
+
+Interpreter interpreter{};
 
 void TWI::Lox::run(std::string source)
 {
@@ -20,7 +23,7 @@ void TWI::Lox::run(std::string source)
 
     if(hadError) return;
 
-    std::cout << AstPrinter{}.print(expression) << "\n";
+    interpreter.interpret(expression);
 }
 
 std::string TWI::Lox::readFile(std::string path)
@@ -67,5 +70,10 @@ void TWI::Lox::runFile(std::string path)
     if (hadError)
     {
         exit(65);
+    }
+
+    if(hadRuntimeError)
+    {
+        exit(70);
     }
 }
