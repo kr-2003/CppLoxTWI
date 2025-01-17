@@ -36,6 +36,7 @@ private:
     std::shared_ptr<Expr> factor();
     std::shared_ptr<Expr> unary();
     std::shared_ptr<Expr> primary();
+    std::shared_ptr<Expr> assignment();
 
     Token consume(TokenType type, std::string message);
     ParseError error(Token token, std::string message);
@@ -52,6 +53,9 @@ private:
     std::shared_ptr<Stmt> statement();
     std::shared_ptr<Stmt> printStatement();
     std::shared_ptr<Stmt> expressionStatement();
+    std::shared_ptr<Stmt> declaration();
+    std::shared_ptr<Stmt> varDeclaration();
+    std::vector<std::shared_ptr<Stmt>> block();
 };
 
 #endif // PARSER_HPP

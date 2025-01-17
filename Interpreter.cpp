@@ -41,6 +41,13 @@ std::any Interpreter::visitUnaryExpr(std::shared_ptr<Unary> expr)
     }
 }
 
+std::any Interpreter::visitAssignExpr(std::shared_ptr<Assign> expr)
+{
+    std::any value = evaluate(expr->value);
+    environment->assign(expr->name, value);
+    return value;
+}
+
 std::any Interpreter::visitBinaryExpr(std::shared_ptr<Binary> expr)
 {
     std::any left = evaluate(expr->left);
@@ -88,6 +95,11 @@ std::any Interpreter::visitBinaryExpr(std::shared_ptr<Binary> expr)
     }
 }
 
+std::any Interpreter::visitVariableExpr(std::shared_ptr<Variable> expr)
+{
+    return environment->get(expr->name);
+}
+
 std::any Interpreter::visitExpressionStmt(std::shared_ptr<Expression> stmt)
 {
     evaluate(stmt->expression);
@@ -103,18 +115,18 @@ std::any Interpreter::visitPrintStmt(std::shared_ptr<Print> stmt)
 
 std::any Interpreter::visitVarStmt(std::shared_ptr<Var> stmt)
 {
-    // std::any value = nullptr;
-    // if (stmt->initializer != nullptr)
-    // {
-    //     value = evaluate(stmt->initializer);
-    // }
-    // environment[stmt->name.lexeme] = value;
+    std::any value = nullptr;
+    if (stmt->initializer != nullptr)
+    {
+        value = evaluate(stmt->initializer);
+    }
+    environment->define(stmt->name.lexeme, value);
     return nullptr;
 }
 
 std::any Interpreter::visitBlockStmt(std::shared_ptr<Block> stmt)
 {
-    // executeBlock(stmt->statements, std::make_shared<Environment>(environment));
+    executeBlock(stmt->statements, std::make_shared<Environment>(environment));
     return nullptr;
 }
 
@@ -212,4 +224,25 @@ std::string Interpreter::stringify(std::any object)
 void Interpreter::execute(std::shared_ptr<Stmt> stmt)
 {
     stmt->accept(*this);
+}
+
+void Interpreter::executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Environment> environment)
+{
+    std::shared_ptr<Environment> previous = this->environment;
+
+    try
+    {
+        this->environment = environment;
+
+        for(std::shared_ptr<Stmt> statement : statements)
+        {
+            execute(statement);
+        }
+    }
+    catch(...)
+    {
+        this->environment = previous;
+        throw;
+    }
+    this->environment = previous;
 }
