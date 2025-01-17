@@ -5,6 +5,7 @@
 #include "Token.hpp"
 #include "Expr.hpp"
 #include "Errors.hpp"
+#include "Stmt.hpp"
 #include <vector>
 #include <memory>
 #include <utility>
@@ -25,7 +26,7 @@ private:
 
 public:
     Parser(std::vector<Token> tokens);
-    std::shared_ptr<Expr> parse();
+    std::vector<std::shared_ptr<Stmt>> parse();
 
 private:
     std::shared_ptr<Expr> expression();
@@ -48,6 +49,9 @@ private:
     Token peek();
     Token previous();
     void synchronize();
+    std::shared_ptr<Stmt> statement();
+    std::shared_ptr<Stmt> printStatement();
+    std::shared_ptr<Stmt> expressionStatement();
 };
 
 #endif // PARSER_HPP

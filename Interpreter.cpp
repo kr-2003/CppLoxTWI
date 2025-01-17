@@ -1,11 +1,13 @@
 #include "./headers/Interpreter.hpp"
 
-void Interpreter::interpret(std::shared_ptr<Expr> expression)
+void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> statements)
 {
     try
     {
-        std::any value = evaluate(expression);
-        std::cout << stringify(value) << "\n";
+        for(std::shared_ptr<Stmt> statement : statements)
+        {
+            execute(statement);
+        }
     }
     catch (RuntimeError &error)
     {
@@ -84,6 +86,36 @@ std::any Interpreter::visitBinaryExpr(std::shared_ptr<Binary> expr)
     default:
         return nullptr;
     }
+}
+
+std::any Interpreter::visitExpressionStmt(std::shared_ptr<Expression> stmt)
+{
+    evaluate(stmt->expression);
+    return nullptr;
+}
+
+std::any Interpreter::visitPrintStmt(std::shared_ptr<Print> stmt)
+{
+    std::any value = evaluate(stmt->expression);
+    std::cout << stringify(value) << "\n";
+    return nullptr;
+}
+
+std::any Interpreter::visitVarStmt(std::shared_ptr<Var> stmt)
+{
+    // std::any value = nullptr;
+    // if (stmt->initializer != nullptr)
+    // {
+    //     value = evaluate(stmt->initializer);
+    // }
+    // environment[stmt->name.lexeme] = value;
+    return nullptr;
+}
+
+std::any Interpreter::visitBlockStmt(std::shared_ptr<Block> stmt)
+{
+    // executeBlock(stmt->statements, std::make_shared<Environment>(environment));
+    return nullptr;
 }
 
 std::any Interpreter::evaluate(std::shared_ptr<Expr> expr)
@@ -175,4 +207,9 @@ std::string Interpreter::stringify(std::any object)
     }
 
     return "Unknown value";
+}
+
+void Interpreter::execute(std::shared_ptr<Stmt> stmt)
+{
+    stmt->accept(*this);
 }

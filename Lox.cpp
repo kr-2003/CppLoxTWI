@@ -19,11 +19,11 @@ void TWI::Lox::run(std::string source)
     Scanner scanner{source};
     std::vector<Token> tokens = scanner.scanTokens();
     Parser parser{tokens};
-    std::shared_ptr<Expr> expression = parser.parse();
+    std::vector<std::shared_ptr<Stmt>> statements = parser.parse();
 
     if(hadError) return;
 
-    interpreter.interpret(expression);
+    interpreter.interpret(statements);
 }
 
 std::string TWI::Lox::readFile(std::string path)
