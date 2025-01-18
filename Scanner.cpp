@@ -261,4 +261,5 @@ void Scanner::initialiseKeywords()
     keywords["true"] = TokenType::TRUE;
     keywords["var"] = TokenType::VAR;
     keywords["while"] = TokenType::WHILE;
+    keywords["break"] = TokenType::BREAK;
 }

@@ -20,6 +20,22 @@ std::any Interpreter::visitLiteralExpr(std::shared_ptr<Literal> expr)
     return expr->value;
 }
 
+std::any Interpreter::visitLogicalExpr(std::shared_ptr<Logical> expr) 
+{
+    std::any left = evaluate(expr->left);
+
+    if(expr->op.type == TokenType::OR)
+    {
+        if(isTruthy(left)) return left;
+    } 
+    else 
+    {
+        if(!isTruthy(left)) return left;
+    }
+
+    return evaluate(expr->right);
+}
+
 std::any Interpreter::visitGroupingExpr(std::shared_ptr<Grouping> expr)
 {
     return evaluate(expr->expression);
@@ -127,6 +143,29 @@ std::any Interpreter::visitVarStmt(std::shared_ptr<Var> stmt)
 std::any Interpreter::visitBlockStmt(std::shared_ptr<Block> stmt)
 {
     executeBlock(stmt->statements, std::make_shared<Environment>(environment));
+    return nullptr;
+}
+
+std::any Interpreter::visitIfStmt(std::shared_ptr<If> stmt) 
+{
+    if(isTruthy(stmt->condition))
+    {
+        execute(stmt->thenBranch);
+    }
+    else 
+    {
+        execute(stmt->elseBranch);
+    }
+    return nullptr;
+}
+
+std::any Interpreter::visitWhileStmt(std::shared_ptr<While> stmt)
+{
+    while(isTruthy(evaluate(stmt->condition)))
+    {
+        execute(stmt->body);
+    }
+    
     return nullptr;
 }
 

@@ -56,6 +56,11 @@ private:
     std::shared_ptr<Stmt> declaration();
     std::shared_ptr<Stmt> varDeclaration();
     std::vector<std::shared_ptr<Stmt>> block();
+    std::shared_ptr<Stmt> ifStatement();
+    std::shared_ptr<Stmt> whileStatement();
+    std::shared_ptr<Stmt> forStatement();
+    std::shared_ptr<Expr> _or();
+    std::shared_ptr<Expr> _and();
 };
 
 #endif // PARSER_HPP

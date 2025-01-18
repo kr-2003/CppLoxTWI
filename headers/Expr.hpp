@@ -15,6 +15,7 @@ class Grouping;
 class Literal;
 class Unary;
 class Variable;
+class Logical;
 
 class ExprVisitor
 {
@@ -25,6 +26,7 @@ public:
     virtual std::any visitLiteralExpr(std::shared_ptr<Literal> expr) = 0;
     virtual std::any visitUnaryExpr(std::shared_ptr<Unary> expr) = 0;
     virtual std::any visitVariableExpr(std::shared_ptr<Variable> expr) = 0;
+    virtual std::any visitLogicalExpr(std::shared_ptr<Logical> expr) = 0;
     virtual ~ExprVisitor() = default;
 };
 
@@ -107,6 +109,21 @@ public:
     std::any accept(ExprVisitor& visitor) override
     {
         return visitor.visitVariableExpr(shared_from_this());
+    }
+};
+
+class Logical : public Expr, public std::enable_shared_from_this<Logical>
+{
+public:
+    std::shared_ptr<Expr> left;
+    Token op;
+    std::shared_ptr<Expr> right;
+
+public:
+    Logical(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right) : left {std::move(left)}, op {std::move(op)}, right {std::move(right)} {}
+    std::any accept(ExprVisitor& visitor) override 
+    {
+        return visitor.visitLogicalExpr(shared_from_this());
     }
 };
 

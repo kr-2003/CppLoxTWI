@@ -15,7 +15,7 @@ enum class TokenType
     IDENTIFIER, STRING, NUMBER,
 
     // Keywords.
-    AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR, PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
+    AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR, PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, BREAK,
 
     EoF
 };
@@ -62,6 +62,7 @@ inline std::string TokenTypeToString(TokenType type)
         case TokenType::TRUE: return "TRUE";
         case TokenType::VAR: return "VAR";
         case TokenType::WHILE: return "WHILE";
+        case TokenType::BREAK: return "BREAK";
         case TokenType::EoF: return "EoF";
     }
     return "Unknown TokenType";

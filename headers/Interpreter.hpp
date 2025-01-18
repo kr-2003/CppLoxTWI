@@ -25,11 +25,14 @@ public:
     std::any visitBinaryExpr(std::shared_ptr<Binary> expr) override;
     std::any visitVariableExpr(std::shared_ptr<Variable> expr) override;
     std::any visitAssignExpr(std::shared_ptr<Assign> expr) override;
+    std::any visitLogicalExpr(std::shared_ptr<Logical> expr) override;
 
     std::any visitBlockStmt(std::shared_ptr<Block> expr) override;
     std::any visitExpressionStmt(std::shared_ptr<Expression> expr) override;
     std::any visitPrintStmt(std::shared_ptr<Print> expr) override;
     std::any visitVarStmt(std::shared_ptr<Var> expr) override;
+    std::any visitIfStmt(std::shared_ptr<If> expr) override;
+    std::any visitWhileStmt(std::shared_ptr<While> expr) override;
 
 private:
     std::shared_ptr<Environment> environment = std::make_shared<Environment>();

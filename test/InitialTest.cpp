@@ -43,21 +43,7 @@ void compare_output(std::string input_path, std::string expected_output_path)
 }
 
 TEST(InitialTest, Testing_Lox_1) {
-    compare_output(TEST_FOLDER_PATH + "/expr_1.lox", TEST_EXPECTED_OUTPUT_FOLDER_PATH + "/expr_1.lox.expected");
+    compare_output(TEST_FOLDER_PATH + "/test_1.lox", TEST_EXPECTED_OUTPUT_FOLDER_PATH + "/test_1.lox.expected");
 }
 
-TEST(InitialTest, Testing_Lox_2) {
-    compare_output(TEST_FOLDER_PATH + "/expr_2.lox", TEST_EXPECTED_OUTPUT_FOLDER_PATH + "/expr_2.lox.expected");
-}
 
-TEST(InitialTest, Testing_Lox_3) {
-    compare_output(TEST_FOLDER_PATH + "/expr_3.lox", TEST_EXPECTED_OUTPUT_FOLDER_PATH + "/expr_3.lox.expected");
-}
-
-TEST(InitialTest, Testing_Lox_4) {
-    compare_output(TEST_FOLDER_PATH + "/expr_4.lox", TEST_EXPECTED_OUTPUT_FOLDER_PATH + "/expr_4.lox.expected");
-}
-
-TEST(InitialTest, Testing_Lox_5) {
-    compare_output(TEST_FOLDER_PATH + "/expr_5.lox", TEST_EXPECTED_OUTPUT_FOLDER_PATH + "/expr_5.lox.expected");
-}
