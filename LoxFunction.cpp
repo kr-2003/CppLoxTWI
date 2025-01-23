@@ -1,7 +1,7 @@
 #include "./headers/LoxFunction.hpp"
 #include "./headers/Interpreter.hpp"
 
-LoxFunction::LoxFunction(std::shared_ptr<Function> declaration) : declaration {std::move(declaration)} {};
+LoxFunction::LoxFunction(std::shared_ptr<Function> declaration, std::shared_ptr<Environment> closure) : declaration {std::move(declaration)}, closure {std::move(closure)} {};
 
 int LoxFunction::arity()
 {
@@ -15,7 +15,7 @@ std::string LoxFunction::toString()
 
 std::any LoxFunction::call(Interpreter& interpreter, std::vector<std::any> arguments)
 {
-    auto environment = std::make_shared<Environment>(interpreter.globals);
+    auto environment = std::make_shared<Environment>(closure);
     for(int i = 0; i < declaration->params.size(); i++) 
     {
         environment->define(declaration->params[i].lexeme, arguments[i]);
