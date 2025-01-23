@@ -16,6 +16,7 @@ class Literal;
 class Unary;
 class Variable;
 class Logical;
+class Call;
 
 class ExprVisitor
 {
@@ -27,6 +28,7 @@ public:
     virtual std::any visitUnaryExpr(std::shared_ptr<Unary> expr) = 0;
     virtual std::any visitVariableExpr(std::shared_ptr<Variable> expr) = 0;
     virtual std::any visitLogicalExpr(std::shared_ptr<Logical> expr) = 0;
+    virtual std::any visitCallExpr(std::shared_ptr<Call> expr) = 0;
     virtual ~ExprVisitor() = default;
 };
 
@@ -124,6 +126,23 @@ public:
     std::any accept(ExprVisitor& visitor) override 
     {
         return visitor.visitLogicalExpr(shared_from_this());
+    }
+};
+
+class Call : public Expr, public std::enable_shared_from_this<Call>
+{
+public:
+    std::shared_ptr<Expr> callee;
+    Token paren;
+    std::vector<std::shared_ptr<Expr>> arguments;
+
+public:
+    Call(std::shared_ptr<Expr> callee, Token paren, std::vector<std::shared_ptr<Expr>> arguments) :
+        callee {std::move(callee)}, paren {std::move(paren)}, arguments {std::move(arguments)} {}
+
+    std::any accept(ExprVisitor& visitor) override 
+    {
+        return visitor.visitCallExpr(shared_from_this());
     }
 };
 

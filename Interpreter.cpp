@@ -1,5 +1,26 @@
 #include "./headers/Interpreter.hpp"
 
+int NativeClock::arity()
+{
+    return 0;
+}
+
+std::any NativeClock::call(Interpreter& interpreter, std::vector<std::any> arguments)
+{
+    auto ticks = std::chrono::system_clock::now().time_since_epoch();
+    return std::chrono::duration<double>{ticks}.count() / 1000.0;
+}
+
+std::string NativeClock::toString()
+{
+    return "<native fn>";
+}
+
+Interpreter::Interpreter()
+{
+    globals->define("clock", std::shared_ptr<NativeClock>{});
+}
+
 void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> statements)
 {
     try
@@ -116,6 +137,36 @@ std::any Interpreter::visitVariableExpr(std::shared_ptr<Variable> expr)
     return environment->get(expr->name);
 }
 
+std::any Interpreter::visitCallExpr(std::shared_ptr<Call> expr)
+{
+    std::cout << "in call expr" << std::endl;
+    std::any callee = evaluate(expr->callee);
+
+    std::vector<std::any> arguments;
+    for(std::shared_ptr<Expr>& argument : expr->arguments) 
+    {
+        arguments.push_back(evaluate(argument));
+    }
+
+    std::shared_ptr<LoxCallable> function;
+
+    if (callee.type() == typeid(std::shared_ptr<LoxFunction>)) {
+      function = std::any_cast<std::shared_ptr<LoxFunction>>(callee);
+    } else {
+      throw RuntimeError{expr->paren,
+          "Can only call functions and classes."};
+    }
+
+    if(arguments.size() != function->arity())
+    {
+        throw RuntimeError{expr->paren, "Expected " +
+          std::to_string(function->arity()) + " arguments but got " +
+          std::to_string(arguments.size()) + "."};
+    }
+
+    return function->call(*this, std::move(arguments));
+}
+
 std::any Interpreter::visitExpressionStmt(std::shared_ptr<Expression> stmt)
 {
     evaluate(stmt->expression);
@@ -166,6 +217,13 @@ std::any Interpreter::visitWhileStmt(std::shared_ptr<While> stmt)
         execute(stmt->body);
     }
     
+    return nullptr;
+}
+
+std::any Interpreter::visitFunctionStmt(std::shared_ptr<Function> stmt)
+{
+    std::shared_ptr<LoxFunction> function = std::make_shared<LoxFunction>(stmt);
+    environment->define(stmt->name.lexeme, function);
     return nullptr;
 }
 

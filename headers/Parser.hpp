@@ -61,6 +61,9 @@ private:
     std::shared_ptr<Stmt> forStatement();
     std::shared_ptr<Expr> _or();
     std::shared_ptr<Expr> _and();
+    std::shared_ptr<Expr> call();
+    std::shared_ptr<Expr> finishCall(std::shared_ptr<Expr> callee);
+    std::shared_ptr<Function> function(std::string kind);
 };
 
 #endif // PARSER_HPP

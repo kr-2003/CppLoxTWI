@@ -8,14 +8,26 @@
 #include "Token.hpp"
 #include "Stmt.hpp"
 #include "Environment.hpp"
+#include "LoxCallable.hpp"
+#include "LoxFunction.hpp"
 #include <any>
 #include <iostream>
 #include <string>
 #include <memory>
 
+class NativeClock : public LoxCallable
+{
+public:
+    int arity()override;
+    std::any call(Interpreter& interpreter, std::vector<std::any> arguments) override;
+    std::string toString() override;
+
+};
+
 class Interpreter : public ExprVisitor, public StmtVisitor
 {
 public:
+    Interpreter();
     void interpret(std::vector<std::shared_ptr<Stmt>> statements);
     void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Environment> environment);
 
@@ -26,6 +38,7 @@ public:
     std::any visitVariableExpr(std::shared_ptr<Variable> expr) override;
     std::any visitAssignExpr(std::shared_ptr<Assign> expr) override;
     std::any visitLogicalExpr(std::shared_ptr<Logical> expr) override;
+    std::any visitCallExpr(std::shared_ptr<Call> expr) override;
 
     std::any visitBlockStmt(std::shared_ptr<Block> expr) override;
     std::any visitExpressionStmt(std::shared_ptr<Expression> expr) override;
@@ -33,9 +46,13 @@ public:
     std::any visitVarStmt(std::shared_ptr<Var> expr) override;
     std::any visitIfStmt(std::shared_ptr<If> expr) override;
     std::any visitWhileStmt(std::shared_ptr<While> expr) override;
+    std::any visitFunctionStmt(std::shared_ptr<Function> expr) override;
+
+public:
+    std::shared_ptr<Environment> globals{new Environment};
 
 private:
-    std::shared_ptr<Environment> environment = std::make_shared<Environment>();
+    std::shared_ptr<Environment> environment = globals;
     std::any evaluate(std::shared_ptr<Expr> expr);
     bool isTruthy(std::any object);
     bool isEqual(const std::any &a, const std::any &b);
