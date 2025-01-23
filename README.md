@@ -17,3 +17,8 @@ Designed as an educational resource, this project welcomes feedback and suggesti
 - [x] Functions
 - [ ] Resolving
 - [ ] Classes
+
+## Testing 
+The project includes a test suite that verifies the correctness of the interpreter. The test suite is written in Lox and can be found in the `test` directory. 
+
+It uses [Google Test](https://github.com/google/googletest) as the testing framework. as the testing framework. 
