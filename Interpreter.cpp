@@ -139,7 +139,6 @@ std::any Interpreter::visitVariableExpr(std::shared_ptr<Variable> expr)
 
 std::any Interpreter::visitCallExpr(std::shared_ptr<Call> expr)
 {
-    std::cout << "in call expr" << std::endl;
     std::any callee = evaluate(expr->callee);
 
     std::vector<std::any> arguments;
@@ -199,15 +198,18 @@ std::any Interpreter::visitBlockStmt(std::shared_ptr<Block> stmt)
 
 std::any Interpreter::visitIfStmt(std::shared_ptr<If> stmt) 
 {
-    if(isTruthy(stmt->condition))
+    if(isTruthy(evaluate(stmt->condition)))
     {
         execute(stmt->thenBranch);
     }
     else 
     {
-        execute(stmt->elseBranch);
+        if(stmt->elseBranch != nullptr)
+        {
+            execute(stmt->elseBranch);
+        }
     }
-    return nullptr;
+    return {};
 }
 
 std::any Interpreter::visitWhileStmt(std::shared_ptr<While> stmt)
@@ -227,6 +229,16 @@ std::any Interpreter::visitFunctionStmt(std::shared_ptr<Function> stmt)
     return nullptr;
 }
 
+std::any Interpreter::visitReturnStmt(std::shared_ptr<Return> stmt) 
+{
+    std::any value = nullptr;
+    if(stmt->value != nullptr)
+    {
+        value = evaluate(stmt->value);
+    }
+    throw LoxReturn{value};
+}
+
 std::any Interpreter::evaluate(std::shared_ptr<Expr> expr)
 {
     return expr->accept(*this);
@@ -234,11 +246,15 @@ std::any Interpreter::evaluate(std::shared_ptr<Expr> expr)
 
 bool Interpreter::isTruthy(std::any object)
 {
+    if(object.type() == typeid(nullptr))
+    {
+        return false;
+    }
     if (object.type() == typeid(bool))
     {
         return std::any_cast<bool>(object);
     }
-    return object.has_value();
+    return true;
 }
 
 bool Interpreter::isEqual(const std::any &a, const std::any &b)

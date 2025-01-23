@@ -1,18 +1,12 @@
-var a = 3;
-print a;
-
-for(var i = 0; i < 10; i = i + 1) {
-    print i;
+fun fib(n) 
+{
+    if (n <= 1) 
+        return n;
+    
+    return fib(n - 1) + fib(n - 2);
 }
 
-var b = 5;
-print b;
-
-var c = 7;
-c = c + 1;
-print c;
-
+for(var i = 0; i < 10; i = i + 1) 
 {
-    var c = 100;
-    print c;
+    print fib(i);
 }

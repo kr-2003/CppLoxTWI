@@ -239,6 +239,8 @@ std::shared_ptr<Stmt> Parser::statement()
         return forStatement();
     if (match(TokenType::FUN))
         return function("function");
+    if (match(TokenType::RETURN))
+        return returnStatement();
     return expressionStatement();
 }
 
@@ -477,4 +479,17 @@ std::shared_ptr<Function> Parser::function(std::string kind)
 
     std::vector<std::shared_ptr<Stmt>> body = block();
     return std::make_shared<Function>(std::move(name), std::move(parameters), std::move(body));
+}
+
+std::shared_ptr<Stmt> Parser::returnStatement()
+{
+    Token keyword = previous();
+    std::shared_ptr<Expr> value = nullptr;
+    if(!check(TokenType::SEMICOLON))
+    {
+        value = expression();
+    }
+    consume(TokenType::SEMICOLON, "Expect ';' after return value.");
+
+    return std::make_shared<Return>(keyword, value);
 }

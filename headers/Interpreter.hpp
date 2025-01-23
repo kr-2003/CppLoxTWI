@@ -10,6 +10,7 @@
 #include "Environment.hpp"
 #include "LoxCallable.hpp"
 #include "LoxFunction.hpp"
+#include "LoxReturn.hpp"
 #include <any>
 #include <iostream>
 #include <string>
@@ -47,6 +48,7 @@ public:
     std::any visitIfStmt(std::shared_ptr<If> expr) override;
     std::any visitWhileStmt(std::shared_ptr<While> expr) override;
     std::any visitFunctionStmt(std::shared_ptr<Function> expr) override;
+    std::any visitReturnStmt(std::shared_ptr<Return> expr) override;
 
 public:
     std::shared_ptr<Environment> globals{new Environment};

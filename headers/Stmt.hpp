@@ -16,6 +16,7 @@ class Var;
 class If;
 class While;
 class Function;
+class Return;
 
 class StmtVisitor
 {
@@ -27,6 +28,7 @@ public:
     virtual std::any visitIfStmt(std::shared_ptr<If> expr) = 0;
     virtual std::any visitWhileStmt(std::shared_ptr<While> expr) = 0;
     virtual std::any visitFunctionStmt(std::shared_ptr<Function> expr) = 0;
+    virtual std::any visitReturnStmt(std::shared_ptr<Return> expr) = 0;
     virtual ~StmtVisitor() = default;
 };
 
@@ -125,6 +127,20 @@ public:
     std::any accept(StmtVisitor& visitor) override
     {
         return visitor.visitFunctionStmt(shared_from_this());
+    }
+};
+
+class Return : public Stmt, public std::enable_shared_from_this<Return> 
+{
+public:
+    Token keyword;
+    std::shared_ptr<Expr> value;
+
+public:
+    Return(Token keyword, std::shared_ptr<Expr> value) : keyword {std::move(keyword)}, value {std::move(value)} {};
+    std::any accept(StmtVisitor& visitor) override
+    {
+        return visitor.visitReturnStmt(shared_from_this());
     }
 };
 
