@@ -15,5 +15,5 @@ Designed as an educational resource, this project welcomes feedback and suggesti
 - [x] Expressions
 - [x] Control Flow
 - [x] Functions
-- [] Resolving
-- [] Classes
+- [ ] Resolving
+- [ ] Classes
