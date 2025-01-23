@@ -6,3 +6,14 @@ This project is a pedagogical implementation of jlox from Part I of Crafting Int
 Crafting Interpreters is a free, beginner-friendly online guide that walks readers through the process of building a programming language from scratch. jlox is the book’s implementation of the Lox language using a tree-walking interpreter.
 
 Designed as an educational resource, this project welcomes feedback and suggestions to help identify errors or improve the implementation.
+
+## Features
+- [x] Scanning
+- [x] Parsing
+- [x] Evaluating
+- [x] Statements
+- [x] Expressions
+- [x] Control Flow
+- [x] Functions
+- [] Resolving
+- [] Classes
