@@ -6,6 +6,7 @@
 #include "headers/Parser.hpp"
 #include "headers/AstPrinter.hpp"
 #include "headers/Interpreter.hpp"
+#include "headers/Resolver.hpp"
 
 TWI::Lox::Lox()
 {
@@ -20,6 +21,15 @@ void TWI::Lox::run(std::string source)
     std::vector<Token> tokens = scanner.scanTokens();
     Parser parser{tokens};
     std::vector<std::shared_ptr<Stmt>> statements = parser.parse();
+
+    if(hadError) return;
+
+    // std::cout << "All good before resolving" << std::endl;
+
+    Resolver resolver{interpreter};
+    resolver.resolve(statements);
+
+    // std::cout << "All good after resolving" << std::endl;
 
     if(hadError) return;
 

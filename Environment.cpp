@@ -39,3 +39,25 @@ void Environment::assign(Token name, std::any value)
 
     throw RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
 }
+
+std::any Environment::getAt(int distance, std::string name)
+{
+    return ancestor(distance)->values[name];
+}
+
+std::shared_ptr<Environment> Environment::ancestor(int distance)
+{
+    std::shared_ptr<Environment> environment = shared_from_this();
+
+    for(int i = 0; i < distance; i++) {
+        environment = environment->enclosing;
+    }
+
+    return environment;
+
+}
+
+void Environment::assignAt(int distance, Token& name, std::any value)
+{
+    ancestor(distance)->values[name.lexeme] = value;
+}

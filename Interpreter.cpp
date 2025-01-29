@@ -36,6 +36,11 @@ void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>> statements)
     }
 }
 
+void Interpreter::resolve(std::shared_ptr<Expr> expr, int depth)
+{
+    locals[expr] = depth;
+}
+
 std::any Interpreter::visitLiteralExpr(std::shared_ptr<Literal> expr)
 {
     return expr->value;
@@ -81,7 +86,18 @@ std::any Interpreter::visitUnaryExpr(std::shared_ptr<Unary> expr)
 std::any Interpreter::visitAssignExpr(std::shared_ptr<Assign> expr)
 {
     std::any value = evaluate(expr->value);
-    environment->assign(expr->name, value);
+
+    auto elem = locals.find(expr);
+    if(elem != locals.end())
+    {
+        int distance = elem->second;
+        environment->assignAt(distance, expr->name, value);
+    } 
+    else 
+    {
+        globals->assign(expr->name, value);
+    }
+    
     return value;
 }
 
@@ -134,7 +150,7 @@ std::any Interpreter::visitBinaryExpr(std::shared_ptr<Binary> expr)
 
 std::any Interpreter::visitVariableExpr(std::shared_ptr<Variable> expr)
 {
-    return environment->get(expr->name);
+    return lookUpVariable(expr->name, expr);
 }
 
 std::any Interpreter::visitCallExpr(std::shared_ptr<Call> expr)
@@ -358,4 +374,18 @@ void Interpreter::executeBlock(std::vector<std::shared_ptr<Stmt>> statements, st
         throw;
     }
     this->environment = previous;
+}
+
+std::any Interpreter::lookUpVariable(Token& name, std::shared_ptr<Expr> expr)
+{
+    auto elem = locals.find(expr);
+    if(elem != locals.end())
+    {
+        int distance = elem->second;
+        return environment->getAt(distance, name.lexeme);
+    }
+    else 
+    {
+        return globals->get(name);
+    }
 }

@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 #include <utility>
+#include <iostream>
 #include "Token.hpp"
 
 class Block;
@@ -46,6 +47,7 @@ public:
     Block(std::vector<std::shared_ptr<Stmt>> statements) : statements(std::move(statements)) {}
     std::any accept(StmtVisitor& visitor) override
     {
+        // std::cout << "In accept of block" << std::endl;
         return visitor.visitBlockStmt(shared_from_this());
     }
 };

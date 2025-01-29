@@ -15,6 +15,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <map>
 
 class NativeClock : public LoxCallable
 {
@@ -31,6 +32,7 @@ public:
     Interpreter();
     void interpret(std::vector<std::shared_ptr<Stmt>> statements);
     void executeBlock(std::vector<std::shared_ptr<Stmt>> statements, std::shared_ptr<Environment> environment);
+    void resolve(std::shared_ptr<Expr> expr, int depth);
 
     std::any visitLiteralExpr(std::shared_ptr<Literal> expr) override;
     std::any visitGroupingExpr(std::shared_ptr<Grouping> expr) override;
@@ -52,9 +54,11 @@ public:
 
 public:
     std::shared_ptr<Environment> globals{new Environment};
+    
 
 private:
     std::shared_ptr<Environment> environment = globals;
+    std::map<std::shared_ptr<Expr>, int> locals;
     std::any evaluate(std::shared_ptr<Expr> expr);
     bool isTruthy(std::any object);
     bool isEqual(const std::any &a, const std::any &b);
@@ -64,6 +68,7 @@ private:
 
     std::string stringify(std::any object);
     void execute(std::shared_ptr<Stmt> stmt);
+    std::any lookUpVariable(Token& name, std::shared_ptr<Expr> expr);
 
 };
 

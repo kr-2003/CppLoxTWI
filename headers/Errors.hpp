@@ -14,6 +14,15 @@ inline static void report(int line, std::string where, std::string message)
     hadError = true;
 }
 
+inline void error(const Token& token, std::string message) {
+  if (token.type == TokenType::EoF) {
+    report(token.line, " at end", message);
+  } else {
+    report(token.line, " at '" + token.lexeme + "'", message);
+  }
+}
+
+
 inline void error(int line, std::string message)
 {
     report(line, "", message);
