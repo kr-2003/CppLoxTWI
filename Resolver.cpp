@@ -147,6 +147,26 @@ std::any Resolver::visitClassStmt(std::shared_ptr<Class> stmt)
 {
     declare(stmt->name);
     define(stmt->name);
+
+    for(std::shared_ptr<Function> method : stmt->methods)
+    {
+        FunctionType declaration = FunctionType::METHOD;
+        resolveFunction(method, declaration);
+    }
+    
+    return nullptr;
+}
+
+std::any Resolver::visitGetExpr(std::shared_ptr<Get> expr)
+{
+    resolve(expr->object);
+    return nullptr;
+}
+
+std::any Resolver::visitSetExpr(std::shared_ptr<Set> expr)
+{
+    resolve(expr->value);
+    resolve(expr->object);
     return nullptr;
 }
 

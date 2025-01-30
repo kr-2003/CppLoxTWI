@@ -17,6 +17,8 @@ class Unary;
 class Variable;
 class Logical;
 class Call;
+class Get;
+class Set;
 
 class ExprVisitor
 {
@@ -29,6 +31,8 @@ public:
     virtual std::any visitVariableExpr(std::shared_ptr<Variable> expr) = 0;
     virtual std::any visitLogicalExpr(std::shared_ptr<Logical> expr) = 0;
     virtual std::any visitCallExpr(std::shared_ptr<Call> expr) = 0;
+    virtual std::any visitGetExpr(std::shared_ptr<Get> expr) = 0;
+    virtual std::any visitSetExpr(std::shared_ptr<Set> expr) = 0;
     virtual ~ExprVisitor() = default;
 };
 
@@ -143,6 +147,37 @@ public:
     std::any accept(ExprVisitor& visitor) override 
     {
         return visitor.visitCallExpr(shared_from_this());
+    }
+};
+
+class Get : public Expr, public std::enable_shared_from_this<Get>
+{
+public:
+    std::shared_ptr<Expr> object;
+    Token name;
+
+public:
+    Get(std::shared_ptr<Expr> object, Token name) : object {std::move(object)}, name {std::move(name)} {}
+    
+    std::any accept(ExprVisitor& visitor) override
+    {
+        return visitor.visitGetExpr(shared_from_this());
+    }
+};
+
+class Set : public Expr, public std::enable_shared_from_this<Set>
+{
+public:
+    std::shared_ptr<Expr> object;
+    Token name;
+    std::shared_ptr<Expr> value;
+
+public:
+    Set(std::shared_ptr<Expr> object, Token name, std::shared_ptr<Expr> value) : object {std::move(object)}, name {std::move(name)}, value {std::move(value)} {}
+
+    std::any accept(ExprVisitor& visitor) override
+    {
+        return visitor.visitSetExpr(shared_from_this());
     }
 };
 

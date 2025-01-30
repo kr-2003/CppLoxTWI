@@ -184,6 +184,32 @@ std::any Interpreter::visitCallExpr(std::shared_ptr<Call> expr)
     return function->call(*this, std::move(arguments));
 }
 
+std::any Interpreter::visitGetExpr(std::shared_ptr<Get> expr)
+{
+    std::any object = evaluate(expr->object);
+    if(object.type() == typeid(std::shared_ptr<LoxInstance>))
+    {
+        return std::any_cast<std::shared_ptr<LoxInstance>>(object)->get(expr->name);
+    }
+
+    throw RuntimeError(expr->name, "Only instances have properties.");
+}
+
+std::any Interpreter::visitSetExpr(std::shared_ptr<Set> expr)
+{
+    std::any object = evaluate(expr->object);
+
+    if(object.type() != typeid(std::shared_ptr<LoxInstance>))
+    {
+        throw RuntimeError(expr->name, "Only instances have fields.");
+    }
+
+    std::any value = evaluate(expr->value);
+    std::any_cast<std::shared_ptr<LoxInstance>>(object)->set(expr->name, value);
+
+    return nullptr;
+}
+
 std::any Interpreter::visitExpressionStmt(std::shared_ptr<Expression> stmt)
 {
     evaluate(stmt->expression);
@@ -260,7 +286,13 @@ std::any Interpreter::visitReturnStmt(std::shared_ptr<Return> stmt)
 std::any Interpreter::visitClassStmt(std::shared_ptr<Class> stmt)
 {
     environment->define(stmt->name.lexeme, nullptr);
-    std::shared_ptr<LoxClass> klass = std::make_shared<LoxClass>(stmt->name.lexeme);
+    std::map<std::string, std::shared_ptr<LoxFunction>> methods;
+    for(std::shared_ptr<Function> method : stmt->methods)
+    {
+        std::shared_ptr<LoxFunction> function = std::make_shared<LoxFunction>(method, environment);
+        methods[method->name.lexeme] = function;
+    }
+    std::shared_ptr<LoxClass> klass = std::make_shared<LoxClass>(stmt->name.lexeme, methods);
     environment->assign(stmt->name, klass);
     return nullptr;
 }

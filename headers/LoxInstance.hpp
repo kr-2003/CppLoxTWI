@@ -3,6 +3,8 @@
 
 
 #include "LoxClass.hpp"
+#include "Token.hpp"
+#include "Errors.hpp"
 
 #include <any>
 #include <map>
@@ -22,6 +24,8 @@ public:
 public:
   LoxInstance(std::shared_ptr<LoxClass> klass) : klass {std::move(klass)} {}
   std::string toString();
+  std::any get(Token& name);
+  std::any set(Token& name, std::any value);
 };
 
 

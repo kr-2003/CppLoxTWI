@@ -43,6 +43,8 @@ public:
     std::any visitAssignExpr(std::shared_ptr<Assign> expr) override;
     std::any visitLogicalExpr(std::shared_ptr<Logical> expr) override;
     std::any visitCallExpr(std::shared_ptr<Call> expr) override;
+    std::any visitGetExpr(std::shared_ptr<Get> expr) override;
+    std::any visitSetExpr(std::shared_ptr<Set> expr) override;
 
     std::any visitBlockStmt(std::shared_ptr<Block> expr) override;
     std::any visitExpressionStmt(std::shared_ptr<Expression> expr) override;

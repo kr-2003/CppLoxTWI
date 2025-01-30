@@ -19,7 +19,8 @@ private:
     enum class FunctionType
     {
         NONE,
-        FUNCTION
+        FUNCTION,
+        METHOD
     };
 
     FunctionType currentFunction = FunctionType::NONE;
@@ -44,6 +45,8 @@ public:
     std::any visitLogicalExpr(std::shared_ptr<Logical> expr) override;
     std::any visitUnaryExpr(std::shared_ptr<Unary> expr) override;
     std::any visitClassStmt(std::shared_ptr<Class> stmt) override;
+    std::any visitGetExpr(std::shared_ptr<Get> expr) override;
+    std::any visitSetExpr(std::shared_ptr<Set> expr) override;
     void resolve(std::vector<std::shared_ptr<Stmt>> statements);
 
 private:
