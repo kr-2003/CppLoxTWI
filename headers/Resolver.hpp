@@ -43,6 +43,7 @@ public:
     std::any visitLiteralExpr(std::shared_ptr<Literal> expr) override;
     std::any visitLogicalExpr(std::shared_ptr<Logical> expr) override;
     std::any visitUnaryExpr(std::shared_ptr<Unary> expr) override;
+    std::any visitClassStmt(std::shared_ptr<Class> stmt) override;
     void resolve(std::vector<std::shared_ptr<Stmt>> statements);
 
 private:

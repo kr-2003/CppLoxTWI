@@ -143,6 +143,13 @@ std::any Resolver::visitUnaryExpr(std::shared_ptr<Unary> expr)
     return nullptr;
 }
 
+std::any Resolver::visitClassStmt(std::shared_ptr<Class> stmt)
+{
+    declare(stmt->name);
+    define(stmt->name);
+    return nullptr;
+}
+
 void Resolver::resolve(std::vector<std::shared_ptr<Stmt>> statements)
 {
     for(std::shared_ptr<Stmt> statement : statements) 

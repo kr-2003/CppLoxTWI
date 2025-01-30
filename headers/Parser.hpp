@@ -65,6 +65,7 @@ private:
     std::shared_ptr<Expr> finishCall(std::shared_ptr<Expr> callee);
     std::shared_ptr<Function> function(std::string kind);
     std::shared_ptr<Stmt> returnStatement();
+    std::shared_ptr<Stmt> classDeclaration();
 };
 
 #endif // PARSER_HPP

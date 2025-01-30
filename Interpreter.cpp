@@ -167,6 +167,8 @@ std::any Interpreter::visitCallExpr(std::shared_ptr<Call> expr)
 
     if (callee.type() == typeid(std::shared_ptr<LoxFunction>)) {
       function = std::any_cast<std::shared_ptr<LoxFunction>>(callee);
+    } else if (callee.type() == typeid(std::shared_ptr<LoxClass>)) {
+      function = std::any_cast<std::shared_ptr<LoxClass>>(callee);
     } else {
       throw RuntimeError{expr->paren,
           "Can only call functions and classes."};
@@ -253,6 +255,14 @@ std::any Interpreter::visitReturnStmt(std::shared_ptr<Return> stmt)
         value = evaluate(stmt->value);
     }
     throw LoxReturn{value};
+}
+
+std::any Interpreter::visitClassStmt(std::shared_ptr<Class> stmt)
+{
+    environment->define(stmt->name.lexeme, nullptr);
+    std::shared_ptr<LoxClass> klass = std::make_shared<LoxClass>(stmt->name.lexeme);
+    environment->assign(stmt->name, klass);
+    return nullptr;
 }
 
 std::any Interpreter::evaluate(std::shared_ptr<Expr> expr)
@@ -345,6 +355,21 @@ std::string Interpreter::stringify(std::any object)
     if (object.type() == typeid(bool))
     {
         return std::any_cast<bool>(object) ? "true" : "false";
+    }
+
+    if(object.type() == typeid(std::shared_ptr<LoxFunction>))
+    {
+        return std::any_cast<std::shared_ptr<LoxFunction>>(object)->toString();
+    }
+
+    if(object.type() == typeid(std::shared_ptr<LoxClass>))
+    {
+        return std::any_cast<std::shared_ptr<LoxClass>>(object)->toString();
+    }
+
+    if(object.type() == typeid(std::shared_ptr<LoxInstance>))
+    {
+        return std::any_cast<std::shared_ptr<LoxInstance>>(object)->toString();
     }
 
     return "Unknown value";

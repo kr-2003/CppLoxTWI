@@ -237,6 +237,8 @@ std::shared_ptr<Stmt> Parser::statement()
         return whileStatement();
     if (match(TokenType::FOR))
         return forStatement();
+    if (match(TokenType::CLASS))
+        return classDeclaration();
     if (match(TokenType::FUN))
         return function("function");
     if (match(TokenType::RETURN))
@@ -492,4 +494,20 @@ std::shared_ptr<Stmt> Parser::returnStatement()
     consume(TokenType::SEMICOLON, "Expect ';' after return value.");
 
     return std::make_shared<Return>(keyword, value);
+}
+
+std::shared_ptr<Stmt> Parser::classDeclaration()
+{
+    Token name = consume(TokenType::IDENTIFIER, "Expect class name.");
+    consume(TokenType::LEFT_BRACE, "Expect '{' before class body");
+
+    std::vector<std::shared_ptr<Function>> methods;
+    while(!check(TokenType::RIGHT_BRACE) && !isAtEnd())
+    {
+        methods.push_back(function("method"));
+    }
+    
+    consume(TokenType::RIGHT_BRACE, "Expect '}' after class body.");
+
+    return std::make_shared<Class>(name, methods);
 }
