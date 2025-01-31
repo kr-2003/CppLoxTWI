@@ -20,10 +20,18 @@ private:
     {
         NONE,
         FUNCTION,
+        INITIALIZER,
         METHOD
     };
 
+    enum class ClassType
+    {
+        NONE,
+        CLASS
+    };
+
     FunctionType currentFunction = FunctionType::NONE;
+    ClassType currentClass = ClassType::NONE;
 
 public:
     Resolver(Interpreter& interpreter) : interpreter {interpreter} {}

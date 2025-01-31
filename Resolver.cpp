@@ -87,6 +87,10 @@ std::any Resolver::visitReturnStmt(std::shared_ptr<Return> stmt)
 
     if(stmt->value != nullptr)
     {
+        if(currentFunction == FunctionType::INITIALIZER)
+        {
+            error(stmt->keyword, "Can't return a value from initializer.");
+        }
         resolve(stmt->value);
     }
 
@@ -145,6 +149,8 @@ std::any Resolver::visitUnaryExpr(std::shared_ptr<Unary> expr)
 
 std::any Resolver::visitClassStmt(std::shared_ptr<Class> stmt)
 {
+    ClassType enclosingClass = currentClass;
+    currentClass = ClassType::CLASS;
     declare(stmt->name);
     define(stmt->name);
 
@@ -154,10 +160,16 @@ std::any Resolver::visitClassStmt(std::shared_ptr<Class> stmt)
     for(std::shared_ptr<Function> method : stmt->methods)
     {
         FunctionType declaration = FunctionType::METHOD;
+        if(method->name.lexeme == "init")
+        {
+            declaration = FunctionType::INITIALIZER;
+        }
         resolveFunction(method, declaration);
     }
 
     endScope();
+
+    currentClass = enclosingClass;
 
     return nullptr;
 }
@@ -177,6 +189,11 @@ std::any Resolver::visitSetExpr(std::shared_ptr<Set> expr)
 
 std::any Resolver::visitThisExpr(std::shared_ptr<This> expr)
 {
+    if(currentClass == ClassType::NONE)
+    {
+        error(expr->keyword, "Can't use 'this' outside of a class.");
+        return nullptr;
+    }
     resolveLocal(expr, expr->keyword);
     return nullptr;
 }

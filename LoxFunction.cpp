@@ -1,7 +1,7 @@
 #include "./headers/LoxFunction.hpp"
 #include "./headers/Interpreter.hpp"
 
-LoxFunction::LoxFunction(std::shared_ptr<Function> declaration, std::shared_ptr<Environment> closure) : declaration {std::move(declaration)}, closure {std::move(closure)} {};
+LoxFunction::LoxFunction(std::shared_ptr<Function> declaration, std::shared_ptr<Environment> closure, bool isInitializer) : declaration {std::move(declaration)}, closure {std::move(closure)}, isInitializer {std::move(isInitializer)} {};
 
 int LoxFunction::arity()
 {
@@ -23,7 +23,16 @@ std::any LoxFunction::call(Interpreter& interpreter, std::vector<std::any> argum
     try {
         interpreter.executeBlock(declaration->body, environment);
     } catch (LoxReturn &returnValue) {
+        if(isInitializer)
+        {
+            return closure->getAt(0, "this");
+        }
         return returnValue.value;
+    }
+
+    if(isInitializer) 
+    {
+        return closure->getAt(0, "this");
     }
     
     return nullptr;
@@ -33,5 +42,5 @@ std::shared_ptr<LoxFunction> LoxFunction::bind(std::shared_ptr<LoxInstance> inst
 {
     std::shared_ptr<Environment> environment = std::make_shared<Environment>(closure);
     environment->define("this", instance);
-    return std::make_shared<LoxFunction>(declaration, environment);
+    return std::make_shared<LoxFunction>(declaration, environment, isInitializer);
 }

@@ -273,7 +273,7 @@ std::any Interpreter::visitWhileStmt(std::shared_ptr<While> stmt)
 
 std::any Interpreter::visitFunctionStmt(std::shared_ptr<Function> stmt)
 {
-    std::shared_ptr<LoxFunction> function = std::make_shared<LoxFunction>(stmt, environment);
+    std::shared_ptr<LoxFunction> function = std::make_shared<LoxFunction>(stmt, environment, false);
     environment->define(stmt->name.lexeme, function);
     return nullptr;
 }
@@ -294,7 +294,7 @@ std::any Interpreter::visitClassStmt(std::shared_ptr<Class> stmt)
     std::map<std::string, std::shared_ptr<LoxFunction>> methods;
     for(std::shared_ptr<Function> method : stmt->methods)
     {
-        std::shared_ptr<LoxFunction> function = std::make_shared<LoxFunction>(method, environment);
+        std::shared_ptr<LoxFunction> function = std::make_shared<LoxFunction>(method, environment, method->name.lexeme == "init");
         methods[method->name.lexeme] = function;
     }
     std::shared_ptr<LoxClass> klass = std::make_shared<LoxClass>(stmt->name.lexeme, methods);
