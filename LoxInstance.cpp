@@ -17,7 +17,7 @@ std::any LoxInstance::get(Token& name)
     std::shared_ptr<LoxFunction> method = klass->findMethod(name.lexeme);
     if(method != nullptr) 
     {
-        return method;
+        return method->bind(shared_from_this());
     }
 
     throw RuntimeError(name, "Undefined property '" + name.lexeme + "'.");
@@ -27,4 +27,5 @@ std::any LoxInstance::get(Token& name)
 std::any LoxInstance::set(Token& name, std::any value)
 {
     fields[name.lexeme] = value;
+    return nullptr;
 }

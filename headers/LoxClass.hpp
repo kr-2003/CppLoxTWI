@@ -9,6 +9,8 @@
 #include <any>
 #include <map>
 
+class LoxFunction;
+
 class LoxClass : public LoxCallable, public std::enable_shared_from_this<LoxClass> 
 {
 public:

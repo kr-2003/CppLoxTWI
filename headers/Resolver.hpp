@@ -47,6 +47,7 @@ public:
     std::any visitClassStmt(std::shared_ptr<Class> stmt) override;
     std::any visitGetExpr(std::shared_ptr<Get> expr) override;
     std::any visitSetExpr(std::shared_ptr<Set> expr) override;
+    std::any visitThisExpr(std::shared_ptr<This> expr) override;
     void resolve(std::vector<std::shared_ptr<Stmt>> statements);
 
 private:

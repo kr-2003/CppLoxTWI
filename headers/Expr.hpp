@@ -19,6 +19,7 @@ class Logical;
 class Call;
 class Get;
 class Set;
+class This;
 
 class ExprVisitor
 {
@@ -33,6 +34,7 @@ public:
     virtual std::any visitCallExpr(std::shared_ptr<Call> expr) = 0;
     virtual std::any visitGetExpr(std::shared_ptr<Get> expr) = 0;
     virtual std::any visitSetExpr(std::shared_ptr<Set> expr) = 0;
+    virtual std::any visitThisExpr(std::shared_ptr<This> expr) = 0;
     virtual ~ExprVisitor() = default;
 };
 
@@ -181,5 +183,18 @@ public:
     }
 };
 
+class This : public Expr, public std::enable_shared_from_this<This>
+{
+public:
+    Token keyword;
+
+public:
+    This(Token keyword) : keyword {std::move(keyword)} {}
+
+    std::any accept(ExprVisitor& visitor) override
+    {
+        return visitor.visitThisExpr(shared_from_this());
+    }
+};
 
 #endif
