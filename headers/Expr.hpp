@@ -20,6 +20,7 @@ class Call;
 class Get;
 class Set;
 class This;
+class Super;
 
 class ExprVisitor
 {
@@ -35,6 +36,7 @@ public:
     virtual std::any visitGetExpr(std::shared_ptr<Get> expr) = 0;
     virtual std::any visitSetExpr(std::shared_ptr<Set> expr) = 0;
     virtual std::any visitThisExpr(std::shared_ptr<This> expr) = 0;
+    virtual std::any visitSuperExpr(std::shared_ptr<Super> epxr) = 0;
     virtual ~ExprVisitor() = default;
 };
 
@@ -194,6 +196,21 @@ public:
     std::any accept(ExprVisitor& visitor) override
     {
         return visitor.visitThisExpr(shared_from_this());
+    }
+};
+
+class Super : public Expr, public std::enable_shared_from_this<Super> 
+{
+public:
+    Token keyword;
+    Token method;
+
+public:
+    Super(Token keyword, Token method) : keyword {std::move(keyword)}, method {std::move(method)} {}
+
+    std::any accept(ExprVisitor& visitor) override 
+    {
+        return visitor.visitSuperExpr(shared_from_this());
     }
 };
 

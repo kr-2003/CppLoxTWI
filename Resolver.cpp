@@ -154,6 +154,18 @@ std::any Resolver::visitClassStmt(std::shared_ptr<Class> stmt)
     declare(stmt->name);
     define(stmt->name);
 
+    if(stmt->superclass != nullptr && stmt->name.lexeme == stmt->superclass->name.lexeme)
+    {
+        error(stmt->superclass->name, "A class can't inherit from itself.");
+    }
+
+    if(stmt->superclass != nullptr)
+    {
+        currentClass = ClassType::SUBCLASS;
+        resolve(stmt->superclass);
+        scopes.back()["super"] = true;
+    }
+
     beginScope();
     scopes.back()["this"] = true;
 
@@ -168,6 +180,11 @@ std::any Resolver::visitClassStmt(std::shared_ptr<Class> stmt)
     }
 
     endScope();
+
+    if(stmt->superclass != nullptr) 
+    {
+        endScope();
+    }
 
     currentClass = enclosingClass;
 
@@ -194,6 +211,20 @@ std::any Resolver::visitThisExpr(std::shared_ptr<This> expr)
         error(expr->keyword, "Can't use 'this' outside of a class.");
         return nullptr;
     }
+    resolveLocal(expr, expr->keyword);
+    return nullptr;
+}
+
+std::any Resolver::visitSuperExpr(std::shared_ptr<Super> expr)
+{
+    if (currentClass == ClassType::NONE) {
+      error(expr->keyword,
+          "Can't user 'super' outside of a class.");
+    } else if (currentClass != ClassType::SUBCLASS) {
+      error(expr->keyword,
+          "Can't user 'super' in a class with no superclass.");
+    }
+
     resolveLocal(expr, expr->keyword);
     return nullptr;
 }

@@ -142,6 +142,14 @@ std::shared_ptr<Expr> Parser::primary()
         return std::make_shared<Grouping>(expr);
     }
 
+    if (match(TokenType::SUPER))
+    {
+        Token keyword = previous();
+        consume(TokenType::DOT, "Expect '.' after super.");
+        Token method = consume(TokenType::IDENTIFIER, "Expect superclass method name.");
+        return std::make_shared<Super>(keyword, method);
+    }
+
     throw error(peek(), "Expect expression.");
 }
 
@@ -513,6 +521,14 @@ std::shared_ptr<Stmt> Parser::returnStatement()
 std::shared_ptr<Stmt> Parser::classDeclaration()
 {
     Token name = consume(TokenType::IDENTIFIER, "Expect class name.");
+
+    std::shared_ptr<Variable> superclass = nullptr;
+    if(match(TokenType::LESS))
+    {
+        consume(TokenType::IDENTIFIER, "Expect superclass name.");
+        superclass = std::make_shared<Variable>(previous());
+    }
+
     consume(TokenType::LEFT_BRACE, "Expect '{' before class body");
 
     std::vector<std::shared_ptr<Function>> methods;
@@ -523,5 +539,5 @@ std::shared_ptr<Stmt> Parser::classDeclaration()
     
     consume(TokenType::RIGHT_BRACE, "Expect '}' after class body.");
 
-    return std::make_shared<Class>(name, methods);
+    return std::make_shared<Class>(name, superclass, methods);
 }

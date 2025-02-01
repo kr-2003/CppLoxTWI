@@ -13,6 +13,8 @@ class Environment : public std::enable_shared_from_this<Environment>
 {
 private:
     std::unordered_map<std::string, std::any> values;
+
+public:
     std::shared_ptr<Environment> enclosing;
 
 public:

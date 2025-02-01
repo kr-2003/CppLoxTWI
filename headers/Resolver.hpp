@@ -27,7 +27,8 @@ private:
     enum class ClassType
     {
         NONE,
-        CLASS
+        CLASS,
+        SUBCLASS
     };
 
     FunctionType currentFunction = FunctionType::NONE;
@@ -56,6 +57,7 @@ public:
     std::any visitGetExpr(std::shared_ptr<Get> expr) override;
     std::any visitSetExpr(std::shared_ptr<Set> expr) override;
     std::any visitThisExpr(std::shared_ptr<This> expr) override;
+    std::any visitSuperExpr(std::shared_ptr<Super> expr) override;
     void resolve(std::vector<std::shared_ptr<Stmt>> statements);
 
 private:

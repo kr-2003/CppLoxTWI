@@ -215,6 +215,27 @@ std::any Interpreter::visitThisExpr(std::shared_ptr<This> expr)
     return lookUpVariable(expr->keyword, expr);
 }
 
+std::any Interpreter::visitSuperExpr(std::shared_ptr<Super> expr)
+{
+    int distance = locals[expr];
+    auto superclass = std::any_cast<
+        std::shared_ptr<LoxClass>>(environment->getAt(
+            distance, "super"));
+
+    auto object = std::any_cast<std::shared_ptr<LoxInstance>>(
+        environment->getAt(distance - 1, "this"));
+
+    std::shared_ptr<LoxFunction> method = superclass->findMethod(
+        expr->method.lexeme);
+
+    if (method == nullptr) {
+      throw RuntimeError(expr->method,
+          "Undefined property '" + expr->method.lexeme + "'.");
+    }
+
+    return method->bind(object);
+}
+
 std::any Interpreter::visitExpressionStmt(std::shared_ptr<Expression> stmt)
 {
     evaluate(stmt->expression);
@@ -290,14 +311,42 @@ std::any Interpreter::visitReturnStmt(std::shared_ptr<Return> stmt)
 
 std::any Interpreter::visitClassStmt(std::shared_ptr<Class> stmt)
 {
+    std::any superclass = nullptr;
+    if(stmt->superclass != nullptr)
+    {
+        superclass = evaluate(stmt->superclass);
+        if(superclass.type() != typeid(std::shared_ptr<LoxClass>))
+        {
+            throw RuntimeError(stmt->superclass->name, "Superclass must be a class.");
+        }
+
+    }
     environment->define(stmt->name.lexeme, nullptr);
+
+    if(stmt->superclass != nullptr)
+    {
+        environment = std::make_shared<Environment>(environment);
+        environment->define("super", superclass);
+    }
+
     std::map<std::string, std::shared_ptr<LoxFunction>> methods;
     for(std::shared_ptr<Function> method : stmt->methods)
     {
         std::shared_ptr<LoxFunction> function = std::make_shared<LoxFunction>(method, environment, method->name.lexeme == "init");
         methods[method->name.lexeme] = function;
     }
-    std::shared_ptr<LoxClass> klass = std::make_shared<LoxClass>(stmt->name.lexeme, methods);
+    std::shared_ptr<LoxClass> superklass = nullptr;
+    if (superclass.type() == typeid(std::shared_ptr<LoxClass>)) 
+    {
+        superklass = std::any_cast<std::shared_ptr<LoxClass>>(superclass);
+    }
+    std::shared_ptr<LoxClass> klass = std::make_shared<LoxClass>(stmt->name.lexeme, superklass, methods);
+
+    if (superklass != nullptr) 
+    {
+      environment = environment->enclosing;
+    }
+
     environment->assign(stmt->name, klass);
     return nullptr;
 }
